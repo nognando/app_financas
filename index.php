@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Controle de Orçamento</title>
-    <a href="mensal.php" class="btn btn-secondary mb-3">📅 Ver Gastos Mensais</a>
+    
 
     <!-- BOOTSTRAP 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -32,6 +32,7 @@
 <nav class="navbar navbar-light bg-white p-3 shadow-sm mb-4">
     <div class="container">
         <h3 class="m-0">💰 Controle de Orçamento</h3>
+        <a href="mensal.php" class="btn btn-secondary mb-3">📅 Ver Gastos Mensais</a>
     </div>
 </nav>
 
