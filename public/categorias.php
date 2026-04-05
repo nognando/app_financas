@@ -1,6 +1,6 @@
 <?php
 // 1. Inclui o arquivo de conexão com o banco de dados
-require_once 'config/database.php';
+//require_once 'config/database.php';
 
 // Variáveis para controlar as mensagens de feedback na tela
 $mensagem = '';
