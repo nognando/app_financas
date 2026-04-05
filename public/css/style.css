@@ -299,3 +299,59 @@ h2 {
     color: #721c24;
     border: 1px solid #f5c6cb;
 }
+
+/* =========================================
+   5. TABELAS E BADGES
+   ========================================= */
+
+.table-responsive {
+    overflow-x: auto;
+    margin-top: 15px;
+}
+
+.tabela-dados {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 400px; /* Garante que não quebre no celular */
+}
+
+.tabela-dados th, .tabela-dados td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #e9ecef;
+    text-align: left;
+    font-size: 0.95rem;
+}
+
+.tabela-dados th {
+    background-color: #f8f9fa;
+    font-weight: 700;
+    color: #495057;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+/* Efeito ao passar o mouse na linha da tabela */
+.tabela-dados tbody tr:hover {
+    background-color: #f1f9ff;
+}
+
+/* Etiquetas coloridas para os tipos */
+.badge-sucesso {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.badge-perigo {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}

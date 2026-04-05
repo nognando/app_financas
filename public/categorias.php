@@ -1,55 +1,60 @@
 <?php
+// ATIVE O MODO DEBUG (Remova quando colocar em produção oficial)
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 // 1. Inclui o arquivo de conexão com o banco de dados
 require_once '../config/database.php';
 
-// Variáveis para controlar as mensagens de feedback na tela
 $mensagem = '';
 $tipoMensagem = '';
 
-// 2. Verifica se o formulário foi enviado (Método POST)
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    
-    // Pega os dados do formulário e remove espaços em branco extras
-    $nome = trim($_POST['nome']);
-    $tipo = trim($_POST['tipo']);
+try {
+    // 2. Instancia a conexão com o banco DE IMEDIATO (vamos precisar para salvar e para listar)
+    $database = new Database();
+    $db = $database->getConnection();
 
-    // Validação simples: verifica se os campos não estão vazios
-    if (!empty($nome) && !empty($tipo)) {
+    // 3. Lógica para SALVAR uma nova categoria (se o formulário foi enviado)
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
         
-        try {
-            // Instancia o banco e pega a conexão
-            $database = new Database();
-            $db = $database->getConnection();
+        $nome = trim($_POST['nome']);
+        $tipo = trim($_POST['tipo']);
 
-            // Prepara a query SQL com os "bind parameters" (:nome, :tipo) para evitar SQL Injection
-            $query = "INSERT INTO categorias (nome, tipo) VALUES (:nome, :tipo)";
-            $stmt = $db->prepare($query);
+        if (!empty($nome) && !empty($tipo)) {
+            $queryInsert = "INSERT INTO categorias (nome, tipo) VALUES (:nome, :tipo)";
+            $stmtInsert = $db->prepare($queryInsert);
+            $stmtInsert->bindParam(':nome', $nome);
+            $stmtInsert->bindParam(':tipo', $tipo);
 
-            // Vincula os valores e executa
-            $stmt->bindParam(':nome', $nome);
-            $stmt->bindParam(':tipo', $tipo);
-
-            if ($stmt->execute()) {
+            if ($stmtInsert->execute()) {
                 $mensagem = "Categoria '$nome' adicionada com sucesso!";
                 $tipoMensagem = "alerta-sucesso";
             } else {
                 $mensagem = "Erro ao adicionar a categoria.";
                 $tipoMensagem = "alerta-erro";
             }
-
-        } catch(PDOException $e) {
-            $mensagem = "Erro no banco de dados: " . $e->getMessage();
+        } else {
+            $mensagem = "Por favor, preencha todos os campos.";
             $tipoMensagem = "alerta-erro";
         }
-
-    } else {
-        $mensagem = "Por favor, preencha todos os campos.";
-        $tipoMensagem = "alerta-erro";
     }
+
+    // 4. Lógica para BUSCAR as categorias cadastradas (executa sempre)
+    // Ordenando primeiro pelo tipo (entradas juntas, saídas juntas) e depois em ordem alfabética
+    $querySelect = "SELECT id, nome, tipo FROM categorias ORDER BY tipo ASC, nome ASC";
+    $stmtSelect = $db->prepare($querySelect);
+    $stmtSelect->execute();
+    $listaCategorias = $stmtSelect->fetchAll();
+
+} catch(PDOException $e) {
+    $mensagem = "Erro crítico no banco de dados: " . $e->getMessage();
+    $tipoMensagem = "alerta-erro";
+    $listaCategorias = []; // Deixa a lista vazia em caso de erro para não quebrar a tela
 }
 
-// 3. Carrega o cabeçalho (Visual)
-require_once 'includes/header.php';
+// 5. Carrega o cabeçalho (Visual)
+require_once '../includes/header.php';
 ?>
 
 <section class="destaque">
@@ -67,14 +72,14 @@ require_once 'includes/header.php';
     <?php endif; ?>
 
     <section class="grade-projetos">
+        
         <article class="cartao-projeto">
             <h3>Nova Categoria</h3>
             
             <form action="" method="POST">
-                
                 <div class="form-group">
                     <label for="nome">Nome da Categoria</label>
-                    <input type="text" id="nome" name="nome" class="form-control" placeholder="Ex: Alimentação, Salário..." required>
+                    <input type="text" id="nome" name="nome" class="form-control" placeholder="Ex: Alimentação, Salário, Investimentos..." required>
                 </div>
 
                 <div class="form-group">
@@ -88,13 +93,52 @@ require_once 'includes/header.php';
 
                 <button type="submit" class="botao btn-sucesso" style="width: 100%;">Salvar Categoria</button>
             </form>
-            
         </article>
+
+        <article class="cartao-projeto">
+            <h3>Categorias Cadastradas</h3>
+            
+            <div class="table-responsive">
+                <table class="tabela-dados">
+                    <thead>
+                        <tr>
+                            <th>Nome</th>
+                            <th>Tipo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if(count($listaCategorias) > 0): ?>
+                            
+                            <?php foreach($listaCategorias as $cat): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($cat['nome']); ?></td>
+                                    <td>
+                                        <?php if($cat['tipo'] == 'entrada'): ?>
+                                            <span class="badge-sucesso">Entrada</span>
+                                        <?php else: ?>
+                                            <span class="badge-perigo">Saída</span>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="2" style="text-align: center; color: #6c757d; padding: 20px;">
+                                    Nenhuma categoria cadastrada ainda.
+                                </td>
+                            </tr>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
+        </article>
+
     </section>
 
 </main>
 
 <?php
-// 4. Carrega o rodapé
-require_once 'includes/footer.php';
+// 6. Carrega o rodapé
+require_once '../includes/footer.php';
 ?>
