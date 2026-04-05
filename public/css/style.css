@@ -1,0 +1,21 @@
+/* Estilos Adicionais para Finanças */
+
+.border-entrada { border-left: 6px solid #28a745 !important; }
+.border-saida { border-left: 6px solid #dc3545 !important; }
+
+.valor-positivo { color: #28a745; font-weight: 900; font-size: 1.4rem; }
+.valor-negativo { color: #dc3545; font-weight: 900; font-size: 1.4rem; }
+
+.card-saldo-total {
+    background-color: #000 !important;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.valor-saldo { color: #00a2ed; font-weight: 900; font-size: 1.8rem; }
+
+.btn-sucesso { background-color: #28a745 !important; border-color: #28a745 !important; }
+.btn-perigo { background-color: #dc3545 !important; border-color: #dc3545 !important; }
+
+.acoes-rapidas { margin-top: 30px; }
+.acoes-rapidas .botao { text-align: center; width: 100%; }
