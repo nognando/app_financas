@@ -22,6 +22,7 @@
         <nav class="menu" id="menu-links">
             <a href="index.php">Dashboard</a>
             <a href="#">Transações</a>
+            <a href="cate">Categorias</a>
             <a href="#">Configurações</a>
         </nav>
     </header>
