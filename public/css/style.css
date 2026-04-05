@@ -221,3 +221,28 @@ h2 {
     .cartao-projeto:first-child { margin-left: 0; }
     .cartao-projeto:last-child { margin-right: 0; }
 }
+
+/* =========================================
+   3. CLASSES UTILITÁRIAS (Cores e Bordas)
+   ========================================= */
+
+/* Cores dos Textos de Valores */
+.valor-positivo { color: #28a745; font-weight: 700; font-size: 1.5rem; }
+.valor-negativo { color: #dc3545; font-weight: 700; font-size: 1.5rem; }
+.valor-saldo { color: #000000; font-weight: 900; font-size: 1.8rem; }
+
+/* Indicadores laterais nos cartões */
+.border-entrada { border-left: 5px solid #28a745; }
+.border-saida { border-left: 5px solid #dc3545; }
+.card-saldo-total { 
+    border-left: 5px solid #00a2ed; 
+    background-color: #f1f9ff; 
+    margin-top: 20px;
+}
+
+/* Cores dos Botões de Ação */
+.btn-sucesso { background-color: #28a745; border-color: #28a745; }
+.btn-sucesso:hover { background-color: #218838; border-color: #1e7e34; }
+
+.btn-perigo { background-color: #dc3545; border-color: #dc3545; }
+.btn-perigo:hover { background-color: #c82333; border-color: #bd2130; }
