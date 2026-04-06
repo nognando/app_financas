@@ -111,7 +111,7 @@ require_once 'includes/header.php';
                             
                             <?php foreach($listaCategorias as $cat): ?>
                                 <tr>
-                                    <td><?php echo htmlspecialchars($cat['nome']); ?></td>
+                                    <td data-label="Nome da Categoria"><?php echo htmlspecialchars($cat['nome']); ?></td>
                                     <td>
                                         <?php if($cat['tipo'] == 'entrada'): ?>
                                             <span class="badge-sucesso">Entrada</span>
