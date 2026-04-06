@@ -54,7 +54,7 @@ try {
 }
 
 // 5. Carrega o cabeçalho (Visual)
-require_once '../includes/header.php';
+require_once 'includes/header.php';
 ?>
 
 <section class="destaque">
