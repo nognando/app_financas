@@ -176,6 +176,9 @@ require_once 'includes/header.php';
                                     <?php if($tr['status'] == 'pendente'): ?>
                                         <a href="transacoes.php?consolidar=<?php echo $tr['id']; ?>" class="btn-acao btn-consolidar" title="Consolidar">✔</a>
                                     <?php endif; ?>
+                                    
+                                    <a href="editar_transacao.php?id=<?php echo $tr['id']; ?>" class="btn-acao" style="background-color: #ffc107;" title="Editar">✏️</a>
+                                    
                                     <a href="transacoes.php?excluir=<?php echo $tr['id']; ?>" class="btn-acao btn-excluir" onclick="return confirm('Excluir esta transação?')" title="Excluir">✖</a>
                                 </td>
                             </tr>
