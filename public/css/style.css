@@ -355,3 +355,38 @@ h2 {
     font-weight: 900;
     text-transform: uppercase;
 }
+
+/* Status de Pagamento */
+.badge-pendente {
+    background-color: #fff3cd;
+    color: #856404;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    border: 1px solid #ffeeba;
+}
+
+.badge-pago {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    border: 1px solid #c3e6cb;
+}
+
+.btn-acao {
+    padding: 5px 8px;
+    font-size: 0.8rem;
+    margin-left: 5px;
+    border-radius: 4px;
+    text-decoration: none;
+    color: white;
+}
+
+.btn-excluir { background-color: #dc3545; }
+.btn-consolidar { background-color: #17a2b8; }
