@@ -187,4 +187,38 @@ require_once 'includes/header.php';
     </section>
 </main>
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const selectTipo = document.getElementById('tipo_transacao');
+    const selectCategoria = document.getElementById('categoria_id');
+    const opcoesCategorias = Array.from(selectCategoria.options);
+
+    selectTipo.addEventListener('change', function() {
+        const tipoSelecionado = this.value;
+
+        // Habilita o campo de categoria
+        selectCategoria.disabled = false;
+        
+        // Limpa a seleção atual
+        selectCategoria.value = "";
+
+        // Filtra as opções
+        opcoesCategorias.forEach(option => {
+            if (option.value === "") return; // Pula o "Selecione..."
+
+            if (option.getAttribute('data-tipo') === tipoSelecionado) {
+                option.style.display = 'block';
+                option.disabled = false;
+            } else {
+                option.style.display = 'none';
+                option.disabled = true;
+            }
+        });
+
+        // Força o reset para a primeira opção válida visível
+        selectCategoria.selectedIndex = 0;
+    });
+});
+</script>
+
 <?php require_once 'includes/footer.php'; ?>
