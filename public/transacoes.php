@@ -132,48 +132,91 @@ require_once 'includes/header.php';
         </article>
 
         <article class="cartao-projeto">
-            <h3>Histórico Recente</h3>
-            <div class="table-responsive">
-                <table class="tabela-dados">
-                    <thead>
-                        <tr>
-                            <th>Data</th>
-                            <th>Descrição</th>
-                            <th>Valor</th>
-                            <th>Status</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach($listaTransacoes as $tr): ?>
-                            <tr>
-                                <td><?php echo date('d/m', strtotime($tr['data_transacao'])); ?></td>
-                                <td>
-                                    <strong><?php echo htmlspecialchars($tr['descricao']); ?></strong><br>
-                                    <small style="color: #666;"><?php echo $tr['categoria_nome']; ?></small>
-                                </td>
-                                <td class="<?php echo $tr['tipo'] == 'entrada' ? 'valor-positivo' : 'valor-negativo'; ?>">
-                                    <?php echo $tr['tipo'] == 'entrada' ? '+' : '-'; ?> 
-                                    <?php echo number_format($tr['valor'], 2, ',', '.'); ?>
-                                </td>
-                                <td>
-                                    <span class="<?php echo $tr['status'] == 'pago' ? 'badge-pago' : 'badge-pendente'; ?>">
-                                        <?php echo $tr['status'] == 'pago' ? 'Pago' : 'Pendente'; ?>
-                                    </span>
-                                </td>
-                                <td>
-                                    <?php if($tr['status'] == 'pendente'): ?>
-                                        <a href="transacoes.php?consolidar=<?php echo $tr['id']; ?>" class="btn-acao btn-consolidar" title="Consolidar">✔</a>
-                                    <?php endif; ?>
-                                    <a href="transacoes.php?excluir=<?php echo $tr['id']; ?>" class="btn-acao btn-excluir" onclick="return confirm('Excluir esta transação?')" title="Excluir">✖</a>
-                                </td>
-                            </tr>
+            <h3>Novo Lançamento</h3>
+            <form action="transacoes.php" method="POST" id="form-transacao">
+                
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <input type="text" name="descricao" class="form-control" placeholder="Ex: Compra Mercado" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Valor (R$)</label>
+                    <input type="text" name="valor" class="form-control" placeholder="0,00" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Data</label>
+                    <input type="date" name="data_transacao" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="tipo_transacao">Tipo de Movimentação</label>
+                    <select name="tipo" id="tipo_transacao" class="form-control" required>
+                        <option value="" disabled selected>Selecione primeiro o tipo...</option>
+                        <option value="saida">Saída (Despesa)</option>
+                        <option value="entrada">Entrada (Receita)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="categoria_id">Categoria</label>
+                    <select name="categoria_id" id="categoria_id" class="form-control" required disabled>
+                        <option value="" disabled selected>Selecione o tipo acima primeiro</option>
+                        <?php foreach($listaCategorias as $cat): ?>
+                            <option value="<?php echo $cat['id']; ?>" data-tipo="<?php echo $cat['tipo']; ?>">
+                                <?php echo htmlspecialchars($cat['nome']); ?>
+                            </option>
                         <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Status Inicial</label>
+                    <select name="status" class="form-control">
+                        <option value="pendente">Pendente</option>
+                        <option value="pago">Consolidado (Pago/Recebido)</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="botao btn-sucesso" style="width: 100%;">Lançar Transação</button>
+            </form>
         </article>
     </section>
 </main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const selectTipo = document.getElementById('tipo_transacao');
+    const selectCategoria = document.getElementById('categoria_id');
+    const opcoesCategorias = Array.from(selectCategoria.options);
+
+    selectTipo.addEventListener('change', function() {
+        const tipoSelecionado = this.value;
+
+        // Habilita o campo de categoria
+        selectCategoria.disabled = false;
+        
+        // Limpa a seleção atual
+        selectCategoria.value = "";
+
+        // Filtra as opções
+        opcoesCategorias.forEach(option => {
+            if (option.value === "") return; // Pula o "Selecione..."
+
+            if (option.getAttribute('data-tipo') === tipoSelecionado) {
+                option.style.display = 'block';
+                option.disabled = false;
+            } else {
+                option.style.display = 'none';
+                option.disabled = true;
+            }
+        });
+
+        // Força o reset para a primeira opção válida visível
+        selectCategoria.selectedIndex = 0;
+    });
+});
+</script>
 
 <?php require_once 'includes/footer.php'; ?>

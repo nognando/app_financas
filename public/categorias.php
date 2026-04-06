@@ -140,5 +140,5 @@ require_once 'includes/header.php';
 
 <?php
 // 6. Carrega o rodapé
-require_once '../includes/footer.php';
+require_once 'includes/footer.php';
 ?>
