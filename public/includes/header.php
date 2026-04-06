@@ -15,7 +15,7 @@
 
     <header class="navbar-fixa">
         <div class="navbar-topo">
-            <a href="home.php" class="logo">NogLabs Finanças</a>
+            <a href="index.php" class="logo">NogLabs Finanças</a>
             <button id="botao-menu" class="botao-menu">&#9776;</button>
         </div>
         
