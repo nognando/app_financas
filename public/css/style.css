@@ -390,3 +390,63 @@ h2 {
 
 .btn-excluir { background-color: #dc3545; }
 .btn-consolidar { background-color: #17a2b8; }
+
+/* =========================================
+   6. TABELAS RESPONSIVAS (Modo Cartão para Celular)
+   ========================================= */
+
+@media (max-width: 767px) {
+    /* Remove a obrigatoriedade de ter 400px */
+    .tabela-dados {
+        min-width: 100%; 
+    }
+
+    /* Força os elementos da tabela a se comportarem como blocos normais */
+    .tabela-dados, 
+    .tabela-dados tbody, 
+    .tabela-dados tr, 
+    .tabela-dados td {
+        display: block;
+        width: 100%;
+    }
+
+    /* Esconde o cabeçalho original (th) */
+    .tabela-dados thead {
+        display: none; 
+    }
+
+    /* Transforma cada linha (tr) em um cartão */
+    .tabela-dados tr {
+        margin-bottom: 15px;
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        background-color: #ffffff;
+        padding: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    /* Ajusta as células (td) dentro do cartão */
+    .tabela-dados td {
+        text-align: right; /* Alinha o valor para a direita */
+        padding: 10px;
+        position: relative;
+        border-bottom: 1px solid #f8f9fa;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .tabela-dados td:last-child {
+        border-bottom: none;
+    }
+
+    /* Pega o texto do 'data-label' no HTML e coloca como título na esquerda */
+    .tabela-dados td::before {
+        content: attr(data-label);
+        font-weight: 700;
+        color: #495057;
+        text-transform: uppercase;
+        font-size: 0.75rem;
+        text-align: left;
+    }
+}

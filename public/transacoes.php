@@ -158,27 +158,31 @@ require_once 'includes/header.php';
                     <tbody>
                         <?php foreach($listaTransacoes as $tr): ?>
                             <tr>
-                                <td><?php echo date('d/m', strtotime($tr['data_transacao'])); ?></td>
-                                <td>
+                                <td data-label="Data">
+                                    <?php echo date('d/m', strtotime($tr['data_transacao'])); ?>
+                                </td>
+                                
+                                <td data-label="Descrição">
                                     <strong><?php echo htmlspecialchars($tr['descricao']); ?></strong><br>
                                     <small style="color: #666;"><?php echo $tr['categoria_nome']; ?></small>
                                 </td>
-                                <td class="<?php echo $tr['tipo'] == 'entrada' ? 'valor-positivo' : 'valor-negativo'; ?>">
+                                
+                                <td data-label="Valor" class="<?php echo $tr['tipo'] == 'entrada' ? 'valor-positivo' : 'valor-negativo'; ?>">
                                     <?php echo $tr['tipo'] == 'entrada' ? '+' : '-'; ?> 
                                     <?php echo number_format($tr['valor'], 2, ',', '.'); ?>
                                 </td>
-                                <td>
+                                
+                                <td data-label="Status">
                                     <span class="<?php echo $tr['status'] == 'pago' ? 'badge-pago' : 'badge-pendente'; ?>">
                                         <?php echo $tr['status'] == 'pago' ? 'Pago' : 'Pendente'; ?>
                                     </span>
                                 </td>
-                                <td>
+                                
+                                <td data-label="Ações">
                                     <?php if($tr['status'] == 'pendente'): ?>
                                         <a href="transacoes.php?consolidar=<?php echo $tr['id']; ?>" class="btn-acao btn-consolidar" title="Consolidar">✔</a>
                                     <?php endif; ?>
-                                    
                                     <a href="editar_transacao.php?id=<?php echo $tr['id']; ?>" class="btn-acao" style="background-color: #ffc107;" title="Editar">✏️</a>
-                                    
                                     <a href="transacoes.php?excluir=<?php echo $tr['id']; ?>" class="btn-acao btn-excluir" onclick="return confirm('Excluir esta transação?')" title="Excluir">✖</a>
                                 </td>
                             </tr>
