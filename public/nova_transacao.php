@@ -68,23 +68,8 @@ require_once 'includes/header.php';
         <article class="cartao-projeto">
             
             <form action="nova_transacao.php" method="POST" id="form-transacao">
-                
-                <div class="form-group">
-                    <label>Descrição</label>
-                    <input type="text" name="descricao" class="form-control" placeholder="Ex: Compra Mercado" required>
-                </div>
 
-                <div class="form-group">
-                    <label>Valor (R$)</label>
-                    <input type="text" name="valor" class="form-control" placeholder="0,00" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Data</label>
-                    <input type="date" name="data_transacao" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
-                </div>
-
-                <div class="form-group">
+                                <div class="form-group">
                     <label for="tipo_transacao">Tipo de Movimentação</label>
                     <select name="tipo" id="tipo_transacao" class="form-control" required>
                         <option value="" disabled selected>Selecione primeiro o tipo...</option>
@@ -103,6 +88,21 @@ require_once 'includes/header.php';
                             </option>
                         <?php endforeach; ?>
                     </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <input type="text" name="descricao" class="form-control" placeholder="Ex: Compra Mercado" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Valor (R$)</label>
+                    <input type="text" name="valor" class="form-control" placeholder="0,00" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Data</label>
+                    <input type="date" name="data_transacao" class="form-control" value="<?php echo date('Y-m-d'); ?>" required>
                 </div>
 
                 <div class="form-group">
