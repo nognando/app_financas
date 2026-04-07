@@ -528,3 +528,10 @@ h2 {
 
 .bg-entrada { background-color: #28a745; }
 .bg-saida { background-color: #dc3545; }
+
+/* Esconde colunas vazias do rodapé da tabela no celular */
+@media (max-width: 767px) {
+    .esconder-celular {
+        display: none !important;
+    }
+}
