@@ -7,17 +7,44 @@ require_once '../config/database.php';
 $mensagem = '';
 $tipoMensagem = '';
 
+// Array para traduzir os meses
+$mesesPt = [
+    '01' => 'Janeiro', '02' => 'Fevereiro', '03' => 'Março',
+    '04' => 'Abril', '05' => 'Maio', '06' => 'Junho',
+    '07' => 'Julho', '08' => 'Agosto', '09' => 'Setembro',
+    '10' => 'Outubro', '11' => 'Novembro', '12' => 'Dezembro'
+];
+
 try {
     $database = new Database();
     $db = $database->getConnection();
 
-    // Captura mensagem de sucesso vinda de outras páginas (Nova ou Editar)
+    // ==========================================
+    // 1. LÓGICA DO FILTRO DE MÊS
+    // ==========================================
+    $competencia = isset($_GET['mes']) ? $_GET['mes'] : date('Y-m');
+    $dataBase = new DateTime($competencia . '-01');
+    $mesAlvo = $dataBase->format('m');
+    $anoAlvo = $dataBase->format('Y');
+    
+    $nomeMesExibicao = $mesesPt[$mesAlvo] . ' / ' . $anoAlvo;
+
+    $dataAnterior = clone $dataBase;
+    $dataAnterior->modify('-1 month');
+    $linkAnterior = $dataAnterior->format('Y-m');
+
+    $dataProxima = clone $dataBase;
+    $dataProxima->modify('+1 month');
+    $linkProximo = $dataProxima->format('Y-m');
+
+    // ==========================================
+    // 2. CAPTURA AÇÕES (COM MENSAGENS)
+    // ==========================================
     if (isset($_GET['msg']) && $_GET['msg'] == 'sucesso') {
         $mensagem = "Operação realizada com sucesso!";
         $tipoMensagem = "alerta-sucesso";
     }
 
-    // --- LÓGICA DE EXCLUSÃO ---
     if (isset($_GET['excluir'])) {
         $idExcluir = $_GET['excluir'];
         $queryDel = "DELETE FROM transacoes WHERE id = :id";
@@ -29,7 +56,6 @@ try {
         }
     }
 
-    // --- LÓGICA DE CONSOLIDAR (PAGO) ---
     if (isset($_GET['consolidar'])) {
         $idConsolidar = $_GET['consolidar'];
         $queryStatus = "UPDATE transacoes SET status = 'pago' WHERE id = :id";
@@ -41,12 +67,18 @@ try {
         }
     }
 
-    // --- BUSCA HISTÓRICO PARA A TELA ---
+    // ==========================================
+    // 3. BUSCA HISTÓRICO FILTRADO PELO MÊS
+    // ==========================================
     $queryTrans = "SELECT t.*, c.nome as categoria_nome 
                    FROM transacoes t 
                    JOIN categorias c ON t.categoria_id = c.id 
+                   WHERE MONTH(t.data_transacao) = :mes AND YEAR(t.data_transacao) = :ano
                    ORDER BY t.data_transacao DESC, t.id DESC";
-    $listaTransacoes = $db->query($queryTrans)->fetchAll();
+    
+    $stmtTrans = $db->prepare($queryTrans);
+    $stmtTrans->execute(['mes' => $mesAlvo, 'ano' => $anoAlvo]);
+    $listaTransacoes = $stmtTrans->fetchAll();
 
 } catch(PDOException $e) {
     $mensagem = "Erro: " . $e->getMessage();
@@ -58,7 +90,11 @@ require_once 'includes/header.php';
 
 <section class="destaque">
     <div class="container">
-        <h2>Histórico de Transações</h2>
+        <div class="navegacao-mes">
+            <a href="transacoes.php?mes=<?php echo $linkAnterior; ?>" class="botao-mes" title="Mês Anterior">&#10094;</a>
+            <h2><?php echo $nomeMesExibicao; ?></h2>
+            <a href="transacoes.php?mes=<?php echo $linkProximo; ?>" class="botao-mes" title="Próximo Mês">&#10095;</a>
+        </div>
     </div>
 </section>
 
@@ -72,7 +108,7 @@ require_once 'includes/header.php';
         <article class="cartao-projeto">
             
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
-                <h3 style="margin: 0;">Lançamentos</h3>
+                <h3 style="margin: 0;">Lançamentos do Mês</h3>
                 <a href="nova_transacao.php" class="botao btn-sucesso" style="margin: 0;">+ Nova Transação</a>
             </div>
 
@@ -111,15 +147,17 @@ require_once 'includes/header.php';
                                     
                                     <td data-label="Ações">
                                         <?php if($tr['status'] == 'pendente'): ?>
-                                            <a href="transacoes.php?consolidar=<?php echo $tr['id']; ?>" class="btn-acao btn-consolidar" title="Consolidar">✔</a>
+                                            <a href="transacoes.php?consolidar=<?php echo $tr['id']; ?>&mes=<?php echo $competencia; ?>" class="btn-acao btn-consolidar" title="Consolidar">✔</a>
                                         <?php endif; ?>
+                                        
                                         <a href="editar_transacao.php?id=<?php echo $tr['id']; ?>" class="btn-acao" style="background-color: #ffc107;" title="Editar">✏️</a>
-                                        <a href="transacoes.php?excluir=<?php echo $tr['id']; ?>" class="btn-acao btn-excluir" onclick="return confirm('Excluir esta transação?')" title="Excluir">✖</a>
+                                        
+                                        <a href="transacoes.php?excluir=<?php echo $tr['id']; ?>&mes=<?php echo $competencia; ?>" class="btn-acao btn-excluir" onclick="return confirm('Excluir esta transação?')" title="Excluir">✖</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php else: ?>
-                            <tr><td colspan="5" style="text-align: center;">Nenhuma transação encontrada.</td></tr>
+                            <tr><td colspan="5" style="text-align: center;">Nenhuma transação encontrada para este mês.</td></tr>
                         <?php endif; ?>
                     </tbody>
                 </table>
