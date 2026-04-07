@@ -141,7 +141,7 @@ require_once 'includes/header.php';
                                         <?php endif; ?>
                                     </td>
                                     <td data-label="Ações">
-                                        <a href="editar_categoria.php?id=<?php echo $cat['id']; ?>" class="btn-acao" style="background-color: #ffc107;" title="Editar">✏️</a>
+                                        <a href="editar_categorias.php?id=<?php echo $cat['id']; ?>" class="btn-acao" style="background-color: #ffc107;" title="Editar">✏️</a>
                                         <a href="categorias.php?excluir=<?php echo $cat['id']; ?>" class="btn-acao btn-excluir" onclick="return confirm('Deseja excluir esta categoria?')" title="Excluir">✖</a>
                                     </td>
                                 </tr>
