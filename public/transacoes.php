@@ -7,7 +7,6 @@ require_once '../config/database.php';
 $mensagem = '';
 $tipoMensagem = '';
 
-// Array para traduzir os meses
 $mesesPt = [
     '01' => 'Janeiro', '02' => 'Fevereiro', '03' => 'Março',
     '04' => 'Abril', '05' => 'Maio', '06' => 'Junho',
@@ -20,9 +19,11 @@ try {
     $db = $database->getConnection();
 
     // ==========================================
-    // 1. LÓGICA DO FILTRO DE MÊS
+    // 1. CAPTURA DOS FILTROS (MÊS E STATUS)
     // ==========================================
     $competencia = isset($_GET['mes']) ? $_GET['mes'] : date('Y-m');
+    $filtroStatus = isset($_GET['status']) ? $_GET['status'] : 'todos'; // Padrão é mostrar 'todos'
+    
     $dataBase = new DateTime($competencia . '-01');
     $mesAlvo = $dataBase->format('m');
     $anoAlvo = $dataBase->format('Y');
@@ -68,16 +69,26 @@ try {
     }
 
     // ==========================================
-    // 3. BUSCA HISTÓRICO FILTRADO PELO MÊS
+    // 3. BUSCA HISTÓRICO COM FILTROS DINÂMICOS
     // ==========================================
+    $sqlCondicaoStatus = "";
+    $params = ['mes' => $mesAlvo, 'ano' => $anoAlvo];
+
+    // Se o usuário escolheu ver só pagas ou só pendentes, adicionamos no SQL
+    if ($filtroStatus == 'pago' || $filtroStatus == 'pendente') {
+        $sqlCondicaoStatus = " AND t.status = :status ";
+        $params['status'] = $filtroStatus;
+    }
+
     $queryTrans = "SELECT t.*, c.nome as categoria_nome 
                    FROM transacoes t 
                    JOIN categorias c ON t.categoria_id = c.id 
                    WHERE MONTH(t.data_transacao) = :mes AND YEAR(t.data_transacao) = :ano
-                   ORDER BY t.data_transacao DESC, t.id DESC";
+                   " . $sqlCondicaoStatus . "
+                   ORDER BY t.data_transacao ASC, t.id DESC"; // Mudei para ASC para mostrar do dia 1 ao 30 na ordem
     
     $stmtTrans = $db->prepare($queryTrans);
-    $stmtTrans->execute(['mes' => $mesAlvo, 'ano' => $anoAlvo]);
+    $stmtTrans->execute($params);
     $listaTransacoes = $stmtTrans->fetchAll();
 
 } catch(PDOException $e) {
@@ -91,9 +102,9 @@ require_once 'includes/header.php';
 <section class="destaque">
     <div class="container">
         <div class="navegacao-mes">
-            <a href="transacoes.php?mes=<?php echo $linkAnterior; ?>" class="botao-mes" title="Mês Anterior">&#10094;</a>
+            <a href="transacoes.php?mes=<?php echo $linkAnterior; ?>&status=<?php echo $filtroStatus; ?>" class="botao-mes" title="Mês Anterior">&#10094;</a>
             <h2><?php echo $nomeMesExibicao; ?></h2>
-            <a href="transacoes.php?mes=<?php echo $linkProximo; ?>" class="botao-mes" title="Próximo Mês">&#10095;</a>
+            <a href="transacoes.php?mes=<?php echo $linkProximo; ?>&status=<?php echo $filtroStatus; ?>" class="botao-mes" title="Próximo Mês">&#10095;</a>
         </div>
     </div>
 </section>
@@ -110,6 +121,26 @@ require_once 'includes/header.php';
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
                 <h3 style="margin: 0;">Lançamentos do Mês</h3>
                 <a href="nova_transacao.php" class="botao btn-sucesso" style="margin: 0;">+ Nova Transação</a>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; overflow-x: auto;">
+                <a href="transacoes.php?mes=<?php echo $competencia; ?>&status=todos" 
+                   class="botao" 
+                   style="margin: 0; <?php echo $filtroStatus == 'todos' ? 'background-color: #000; color: #fff;' : 'background-color: #e9ecef; color: #495057; border-color: #ced4da;'; ?>">
+                   Todas
+                </a>
+                
+                <a href="transacoes.php?mes=<?php echo $competencia; ?>&status=pendente" 
+                   class="botao" 
+                   style="margin: 0; <?php echo $filtroStatus == 'pendente' ? 'background-color: #ffc107; color: #000; border-color: #ffc107;' : 'background-color: #e9ecef; color: #495057; border-color: #ced4da;'; ?>">
+                   ⏳ Pendentes
+                </a>
+
+                <a href="transacoes.php?mes=<?php echo $competencia; ?>&status=pago" 
+                   class="botao" 
+                   style="margin: 0; <?php echo $filtroStatus == 'pago' ? 'background-color: #28a745; color: #fff; border-color: #28a745;' : 'background-color: #e9ecef; color: #495057; border-color: #ced4da;'; ?>">
+                   ✔ Consolidadas
+                </a>
             </div>
 
             <div class="table-responsive">
@@ -147,17 +178,17 @@ require_once 'includes/header.php';
                                     
                                     <td data-label="Ações">
                                         <?php if($tr['status'] == 'pendente'): ?>
-                                            <a href="transacoes.php?consolidar=<?php echo $tr['id']; ?>&mes=<?php echo $competencia; ?>" class="btn-acao btn-consolidar" title="Consolidar">✔</a>
+                                            <a href="transacoes.php?consolidar=<?php echo $tr['id']; ?>&mes=<?php echo $competencia; ?>&status=<?php echo $filtroStatus; ?>" class="btn-acao btn-consolidar" title="Consolidar">✔</a>
                                         <?php endif; ?>
                                         
                                         <a href="editar_transacao.php?id=<?php echo $tr['id']; ?>" class="btn-acao" style="background-color: #ffc107;" title="Editar">✏️</a>
                                         
-                                        <a href="transacoes.php?excluir=<?php echo $tr['id']; ?>&mes=<?php echo $competencia; ?>" class="btn-acao btn-excluir" onclick="return confirm('Excluir esta transação?')" title="Excluir">✖</a>
+                                        <a href="transacoes.php?excluir=<?php echo $tr['id']; ?>&mes=<?php echo $competencia; ?>&status=<?php echo $filtroStatus; ?>" class="btn-acao btn-excluir" onclick="return confirm('Excluir esta transação?')" title="Excluir">✖</a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>
                         <?php else: ?>
-                            <tr><td colspan="5" style="text-align: center;">Nenhuma transação encontrada para este mês.</td></tr>
+                            <tr><td colspan="5" style="text-align: center;">Nenhuma transação encontrada com esse filtro.</td></tr>
                         <?php endif; ?>
                     </tbody>
                 </table>
