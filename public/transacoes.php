@@ -126,20 +126,20 @@ require_once 'includes/header.php';
         <div class="alerta <?php echo $tipoMensagem; ?>"><?php echo $mensagem; ?></div>
     <?php endif; ?>
 
-    <section class="grade-projetos">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+        <h3 style="margin: 0;">Lançamentos do Mês</h3>
+        <a href="nova_transacao.php" class="botao btn-sucesso" style="margin: 0;">+ Nova Transação</a>
+    </div>
+
+    <div style="display: flex; gap: 10px; margin-bottom: 30px; border-bottom: 1px solid #eee; padding-bottom: 15px; overflow-x: auto;">
+        <a href="transacoes.php?mes=<?php echo $competencia; ?>&status=todos" class="botao" style="margin: 0; <?php echo $filtroStatus == 'todos' ? 'background-color: #000; color: #fff;' : 'background-color: #e9ecef; color: #495057; border-color: #ced4da;'; ?>">Todas</a>
+        <a href="transacoes.php?mes=<?php echo $competencia; ?>&status=pendente" class="botao" style="margin: 0; <?php echo $filtroStatus == 'pendente' ? 'background-color: #ffc107; color: #000; border-color: #ffc107;' : 'background-color: #e9ecef; color: #495057; border-color: #ced4da;'; ?>">⏳ Pendentes</a>
+        <a href="transacoes.php?mes=<?php echo $competencia; ?>&status=pago" class="botao" style="margin: 0; <?php echo $filtroStatus == 'pago' ? 'background-color: #28a745; color: #fff; border-color: #28a745;' : 'background-color: #e9ecef; color: #495057; border-color: #ced4da;'; ?>">✔ Consolidadas</a>
+    </div>
+
+    <section style="display: flex; flex-direction: column; gap: 30px;">
         
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
-            <h3 style="margin: 0;">Lançamentos do Mês</h3>
-            <a href="nova_transacao.php" class="botao btn-sucesso" style="margin: 0;">+ Nova Transação</a>
-        </div>
-
-        <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; overflow-x: auto;">
-            <a href="transacoes.php?mes=<?php echo $competencia; ?>&status=todos" class="botao" style="margin: 0; <?php echo $filtroStatus == 'todos' ? 'background-color: #000; color: #fff;' : 'background-color: #e9ecef; color: #495057; border-color: #ced4da;'; ?>">Todas</a>
-            <a href="transacoes.php?mes=<?php echo $competencia; ?>&status=pendente" class="botao" style="margin: 0; <?php echo $filtroStatus == 'pendente' ? 'background-color: #ffc107; color: #000; border-color: #ffc107;' : 'background-color: #e9ecef; color: #495057; border-color: #ced4da;'; ?>">⏳ Pendentes</a>
-            <a href="transacoes.php?mes=<?php echo $competencia; ?>&status=pago" class="botao" style="margin: 0; <?php echo $filtroStatus == 'pago' ? 'background-color: #28a745; color: #fff; border-color: #28a745;' : 'background-color: #e9ecef; color: #495057; border-color: #ced4da;'; ?>">✔ Consolidadas</a>
-        </div>
-
-        <article class="cartao-projeto" style="border-top: 5px solid #28a745; margin-bottom: 30px;">
+        <article class="cartao-projeto" style="border-top: 5px solid #28a745; margin: 0;">
             <h3 style="color: #28a745; margin-bottom: 15px;">⬇️ Receitas</h3>
             
             <div class="table-responsive">
@@ -192,7 +192,7 @@ require_once 'includes/header.php';
             </div>
         </article>
 
-        <article class="cartao-projeto" style="border-top: 5px solid #dc3545;">
+        <article class="cartao-projeto" style="border-top: 5px solid #dc3545; margin: 0;">
             <h3 style="color: #dc3545; margin-bottom: 15px;">⬆️ Despesas</h3>
             
             <div class="table-responsive">
