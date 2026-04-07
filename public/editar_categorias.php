@@ -64,7 +64,7 @@ require_once 'includes/header.php';
     <section class="grade-projetos" style="display: block; max-width: 500px; margin: 0 auto;">
         <article class="cartao-projeto">
             
-            <form action="editar_categoria.php?id=<?php echo $id; ?>" method="POST">
+            <form action="editar_categorias.php?id=<?php echo $id; ?>" method="POST">
                 
                 <div class="form-group">
                     <label for="nome">Nome da Categoria</label>
