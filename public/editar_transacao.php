@@ -80,21 +80,6 @@ require_once 'includes/header.php';
             <form action="editar_transacao.php?id=<?php echo $id; ?>" method="POST" id="form-edit">
                 
                 <div class="form-group">
-                    <label>Descrição</label>
-                    <input type="text" name="descricao" class="form-control" value="<?php echo htmlspecialchars($transacao['descricao']); ?>" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Valor (R$)</label>
-                    <input type="text" name="valor" class="form-control" value="<?php echo number_format($transacao['valor'], 2, ',', ''); ?>" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Data</label>
-                    <input type="date" name="data_transacao" class="form-control" value="<?php echo $transacao['data_transacao']; ?>" required>
-                </div>
-
-                <div class="form-group">
                     <label>Tipo</label>
                     <select name="tipo" id="tipo_transacao" class="form-control">
                         <option value="saida" <?php echo $transacao['tipo'] == 'saida' ? 'selected' : ''; ?>>Saída (Despesa)</option>
@@ -114,6 +99,23 @@ require_once 'includes/header.php';
                         <?php endforeach; ?>
                     </select>
                 </div>
+
+                <div class="form-group">
+                    <label>Descrição</label>
+                    <input type="text" name="descricao" class="form-control" value="<?php echo htmlspecialchars($transacao['descricao']); ?>" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Valor (R$)</label>
+                    <input type="text" name="valor" class="form-control" value="<?php echo number_format($transacao['valor'], 2, ',', ''); ?>" required>
+                </div>
+
+                <div class="form-group">
+                    <label>Data</label>
+                    <input type="date" name="data_transacao" class="form-control" value="<?php echo $transacao['data_transacao']; ?>" required>
+                </div>
+
+                
 
                 <div class="form-group">
                     <label>Status</label>
