@@ -104,20 +104,18 @@ require_once 'includes/header.php';
     
     <h3 style="margin-bottom: 15px; color: #666;">Saldo Realizado <small>(Pago/Recebido no mês)</small></h3>
     <section class="grade-projetos">
-        <article class="cartao-projeto border-entrada">
-            <h3>Entradas Reais</h3>
-            <p class="valor-positivo"><?php echo formatarMoeda($entradasReal); ?></p>
-        </article>
-
-        <article class="cartao-projeto border-saida">
-            <h3>Saídas Reais</h3>
-            <p class="valor-negativo"><?php echo formatarMoeda($saidasReal); ?></p>
+        
+        <article class="cartao-projeto" style="border-left: 5px solid #28a745;">
+            <h3>Total Realizado</h3>
+            <p style="font-size: 1.2rem; font-weight: 700;">Entradas: <span class="valor-positivo"><?php echo formatarMoeda($entradasReal); ?></span></p>
+            <p style="font-size: 1.2rem; font-weight: 700;">Saídas: <span class="valor-negativo"><?php echo formatarMoeda($saidasReal); ?></span></p>
         </article>
 
         <article class="cartao-projeto card-saldo-total" style="background-color: #e8f5e9; border-left: 5px solid #28a745;">
             <h3>Saldo em Conta</h3>
             <p class="valor-saldo"><?php echo formatarMoeda($saldoReal); ?></p>
         </article>
+        
     </section>
 
     <hr style="margin: 40px 0; border: 0; border-top: 1px solid #ddd;">
