@@ -13,7 +13,8 @@ html {
 }
 
 body {
-    font-family: 'Inter', sans-serif; 
+    /* font-family: 'Inter', sans-serif; */ /* <-- Antiga desligada */
+    font-family: 'Roboto', sans-serif;      /* <-- Nova ligada */
     background-color: #f8f9fa; 
     color: #212529; 
     line-height: 1.6;
