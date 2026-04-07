@@ -450,3 +450,36 @@ h2 {
         text-align: left;
     }
 }
+
+/* Navegação de Meses (Dashboard) */
+.navegacao-mes {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+.botao-mes {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 35px;
+    height: 35px;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    border-radius: 50%;
+    text-decoration: none;
+    font-weight: 900;
+    transition: background-color 0.3s;
+}
+
+.botao-mes:hover {
+    background-color: #00a2ed;
+    color: #ffffff;
+}
+
+.navegacao-mes h2 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 1.4rem;
+}
