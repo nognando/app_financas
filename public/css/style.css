@@ -484,3 +484,46 @@ h2 {
     color: #ffffff;
     font-size: 1.4rem;
 }
+
+/* =========================================
+   7. BARRAS DE PROGRESSO (Categorias)
+   ========================================= */
+
+.lista-categorias {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.item-categoria {
+    margin-bottom: 15px;
+}
+
+.info-categoria {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+    color: #495057;
+}
+
+.info-categoria strong {
+    color: #212529;
+}
+
+.barra-fundo {
+    background-color: #e9ecef;
+    border-radius: 4px;
+    height: 8px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.barra-progresso {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease-in-out;
+}
+
+.bg-entrada { background-color: #28a745; }
+.bg-saida { background-color: #dc3545; }
