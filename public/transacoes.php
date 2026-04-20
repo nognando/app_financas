@@ -18,7 +18,6 @@ try {
     $database = new Database();
     $db = $database->getConnection();
 
-    // 1. CAPTURA DOS FILTROS (MÊS E STATUS)
     $competencia = isset($_GET['mes']) ? $_GET['mes'] : date('Y-m');
     $filtroStatus = isset($_GET['status']) ? $_GET['status'] : 'todos'; 
     
@@ -36,7 +35,6 @@ try {
     $dataProxima->modify('+1 month');
     $linkProximo = $dataProxima->format('Y-m');
 
-    // 2. CAPTURA AÇÕES
     if (isset($_GET['msg']) && $_GET['msg'] == 'sucesso') {
         $mensagem = "Operação realizada com sucesso!";
         $tipoMensagem = "alerta-sucesso";
@@ -64,7 +62,6 @@ try {
         }
     }
 
-    // 3. BUSCA HISTÓRICO COM FILTROS
     $sqlCondicaoStatus = "";
     $params = ['mes' => $mesAlvo, 'ano' => $anoAlvo];
 
@@ -84,9 +81,6 @@ try {
     $stmtTrans->execute($params);
     $listaTransacoes = $stmtTrans->fetchAll();
 
-    // ==========================================
-    // 4. SEPARAÇÃO DE RECEITAS E DESPESAS E SOMA
-    // ==========================================
     $listaReceitas = [];
     $listaDespesas = [];
     $totalReceitas = 0;
@@ -139,36 +133,38 @@ require_once 'includes/header.php';
 
     <section style="display: flex; flex-direction: column; gap: 30px;">
         
-        <article class="cartao-projeto" style="border-top: 5px solid #28a745; margin: 0;">
-            <h3 style="color: #28a745; margin-bottom: 15px;">⬇️ Receitas</h3>
+        <!-- BLOCO DE RECEITAS -->
+        <article class="cartao-projeto" style="border-top: 5px solid #28a745; margin: 0; padding: 0; overflow: hidden;">
+            <h3 style="color: #28a745; padding: 20px 20px 10px 20px; margin: 0;">⬇️ Receitas</h3>
             
             <div class="table-responsive">
-                <table class="tabela-dados">
+                <table class="tabela-dados" style="margin: 0; border-radius: 0;">
                     <thead>
                         <tr>
-                            <th>Data</th>
+                            <th class="ocultar-mobile">Data</th>
                             <th>Descrição</th>
                             <th>Valor</th>
-                            <th>Status</th>
-                            <th>Ações</th>
+                            <th class="ocultar-mobile">Status</th>
+                            <th class="ocultar-mobile">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if(count($listaReceitas) > 0): ?>
                             <?php foreach($listaReceitas as $tr): ?>
-                                <tr>
-                                    <td data-label="Data"><?php echo date('d/m/Y', strtotime($tr['data_transacao'])); ?></td>
-                                    <td data-label="Descrição">
+                                <!-- Linha principal visível -->
+                                <tr class="linha-clicavel" onclick="toggleDetalhes('det-rec-<?php echo $tr['id']; ?>')">
+                                    <td class="ocultar-mobile"><?php echo date('d/m/Y', strtotime($tr['data_transacao'])); ?></td>
+                                    <td class="indicador-clique">
                                         <strong><?php echo htmlspecialchars($tr['descricao']); ?></strong><br>
                                         <small style="color: #666;"><?php echo htmlspecialchars($tr['categoria_nome']); ?></small>
                                     </td>
-                                    <td data-label="Valor" class="valor-positivo">+ <?php echo number_format($tr['valor'], 2, ',', '.'); ?></td>
-                                    <td data-label="Status">
+                                    <td class="valor-positivo">+ <?php echo number_format($tr['valor'], 2, ',', '.'); ?></td>
+                                    <td class="ocultar-mobile">
                                         <span class="<?php echo $tr['status'] == 'pago' ? 'badge-pago' : 'badge-pendente'; ?>">
                                             <?php echo $tr['status'] == 'pago' ? 'Recebido' : 'Pendente'; ?>
                                         </span>
                                     </td>
-                                    <td data-label="Ações">
+                                    <td class="ocultar-mobile">
                                         <?php if($tr['status'] == 'pendente'): ?>
                                             <a href="transacoes.php?consolidar=<?php echo $tr['id']; ?>&mes=<?php echo $competencia; ?>&status=<?php echo $filtroStatus; ?>" class="btn-acao btn-consolidar" title="Consolidar">✔</a>
                                         <?php endif; ?>
@@ -176,15 +172,36 @@ require_once 'includes/header.php';
                                         <a href="transacoes.php?excluir=<?php echo $tr['id']; ?>&mes=<?php echo $competencia; ?>&status=<?php echo $filtroStatus; ?>" class="btn-acao btn-excluir" onclick="return confirm('Excluir esta receita?')" title="Excluir">✖</a>
                                     </td>
                                 </tr>
+                                
+                                <!-- Linha Oculta (Expandida no Celular) -->
+                                <tr id="det-rec-<?php echo $tr['id']; ?>" class="linha-detalhes">
+                                    <td colspan="5" style="padding: 0;">
+                                        <div class="box-detalhes">
+                                            <p><strong>📅 Data:</strong> <?php echo date('d/m/Y', strtotime($tr['data_transacao'])); ?></p>
+                                            <p><strong>🏷️ Status:</strong> 
+                                                <span class="<?php echo $tr['status'] == 'pago' ? 'badge-pago' : 'badge-pendente'; ?>">
+                                                    <?php echo $tr['status'] == 'pago' ? 'Recebido' : 'Pendente'; ?>
+                                                </span>
+                                            </p>
+                                            <div style="margin-top: 15px; display: flex; gap: 8px;">
+                                                <?php if($tr['status'] == 'pendente'): ?>
+                                                    <a href="transacoes.php?consolidar=<?php echo $tr['id']; ?>&mes=<?php echo $competencia; ?>&status=<?php echo $filtroStatus; ?>" class="botao btn-sucesso" style="padding: 5px 10px; font-size: 0.8rem; margin: 0;">✔ Consolidar</a>
+                                                <?php endif; ?>
+                                                <a href="editar_transacao.php?id=<?php echo $tr['id']; ?>" class="botao" style="background-color: #ffc107; color: #000; padding: 5px 10px; font-size: 0.8rem; margin: 0; border-color: #ffc107;">✏️ Editar</a>
+                                                <a href="transacoes.php?excluir=<?php echo $tr['id']; ?>&mes=<?php echo $competencia; ?>&status=<?php echo $filtroStatus; ?>" onclick="return confirm('Excluir?')" class="botao btn-perigo" style="padding: 5px 10px; font-size: 0.8rem; margin: 0;">✖ Excluir</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
                             <?php endforeach; ?>
                         <?php else: ?>
-                            <tr><td colspan="5" style="text-align: center; color: #888;">Nenhuma receita encontrada com esse filtro.</td></tr>
+                            <tr><td colspan="5" style="text-align: center; color: #888; padding: 20px;">Nenhuma receita encontrada.</td></tr>
                         <?php endif; ?>
                     </tbody>
                     <tfoot>
                         <tr style="background-color: #e8f5e9;">
                             <td colspan="2" class="esconder-celular" style="text-align: right; font-weight: 700; color: #28a745;">Total Filtrado:</td>
-                            <td data-label="Total Receitas" class="valor-positivo" style="font-weight: 900;">+ <?php echo number_format($totalReceitas, 2, ',', '.'); ?></td>
+                            <td class="valor-positivo" style="font-weight: 900;">+ <?php echo number_format($totalReceitas, 2, ',', '.'); ?></td>
                             <td colspan="2" class="esconder-celular"></td>
                         </tr>
                     </tfoot>
@@ -192,36 +209,38 @@ require_once 'includes/header.php';
             </div>
         </article>
 
-        <article class="cartao-projeto" style="border-top: 5px solid #dc3545; margin: 0;">
-            <h3 style="color: #dc3545; margin-bottom: 15px;">⬆️ Despesas</h3>
+        <!-- BLOCO DE DESPESAS -->
+        <article class="cartao-projeto" style="border-top: 5px solid #dc3545; margin: 0; padding: 0; overflow: hidden;">
+            <h3 style="color: #dc3545; padding: 20px 20px 10px 20px; margin: 0;">⬆️ Despesas</h3>
             
             <div class="table-responsive">
-                <table class="tabela-dados">
+                <table class="tabela-dados" style="margin: 0; border-radius: 0;">
                     <thead>
                         <tr>
-                            <th>Data</th>
+                            <th class="ocultar-mobile">Data</th>
                             <th>Descrição</th>
                             <th>Valor</th>
-                            <th>Status</th>
-                            <th>Ações</th>
+                            <th class="ocultar-mobile">Status</th>
+                            <th class="ocultar-mobile">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if(count($listaDespesas) > 0): ?>
                             <?php foreach($listaDespesas as $tr): ?>
-                                <tr>
-                                    <td data-label="Data"><?php echo date('d/m/Y', strtotime($tr['data_transacao'])); ?></td>
-                                    <td data-label="Descrição">
+                                <!-- Linha principal visível -->
+                                <tr class="linha-clicavel" onclick="toggleDetalhes('det-desp-<?php echo $tr['id']; ?>')">
+                                    <td class="ocultar-mobile"><?php echo date('d/m/Y', strtotime($tr['data_transacao'])); ?></td>
+                                    <td class="indicador-clique">
                                         <strong><?php echo htmlspecialchars($tr['descricao']); ?></strong><br>
                                         <small style="color: #666;"><?php echo htmlspecialchars($tr['categoria_nome']); ?></small>
                                     </td>
-                                    <td data-label="Valor" class="valor-negativo">- <?php echo number_format($tr['valor'], 2, ',', '.'); ?></td>
-                                    <td data-label="Status">
+                                    <td class="valor-negativo">- <?php echo number_format($tr['valor'], 2, ',', '.'); ?></td>
+                                    <td class="ocultar-mobile">
                                         <span class="<?php echo $tr['status'] == 'pago' ? 'badge-pago' : 'badge-pendente'; ?>">
                                             <?php echo $tr['status'] == 'pago' ? 'Pago' : 'Pendente'; ?>
                                         </span>
                                     </td>
-                                    <td data-label="Ações">
+                                    <td class="ocultar-mobile">
                                         <?php if($tr['status'] == 'pendente'): ?>
                                             <a href="transacoes.php?consolidar=<?php echo $tr['id']; ?>&mes=<?php echo $competencia; ?>&status=<?php echo $filtroStatus; ?>" class="btn-acao btn-consolidar" title="Consolidar">✔</a>
                                         <?php endif; ?>
@@ -229,15 +248,36 @@ require_once 'includes/header.php';
                                         <a href="transacoes.php?excluir=<?php echo $tr['id']; ?>&mes=<?php echo $competencia; ?>&status=<?php echo $filtroStatus; ?>" class="btn-acao btn-excluir" onclick="return confirm('Excluir esta despesa?')" title="Excluir">✖</a>
                                     </td>
                                 </tr>
+
+                                <!-- Linha Oculta (Expandida no Celular) -->
+                                <tr id="det-desp-<?php echo $tr['id']; ?>" class="linha-detalhes">
+                                    <td colspan="5" style="padding: 0;">
+                                        <div class="box-detalhes">
+                                            <p><strong>📅 Data:</strong> <?php echo date('d/m/Y', strtotime($tr['data_transacao'])); ?></p>
+                                            <p><strong>🏷️ Status:</strong> 
+                                                <span class="<?php echo $tr['status'] == 'pago' ? 'badge-pago' : 'badge-pendente'; ?>">
+                                                    <?php echo $tr['status'] == 'pago' ? 'Pago' : 'Pendente'; ?>
+                                                </span>
+                                            </p>
+                                            <div style="margin-top: 15px; display: flex; gap: 8px;">
+                                                <?php if($tr['status'] == 'pendente'): ?>
+                                                    <a href="transacoes.php?consolidar=<?php echo $tr['id']; ?>&mes=<?php echo $competencia; ?>&status=<?php echo $filtroStatus; ?>" class="botao btn-sucesso" style="padding: 5px 10px; font-size: 0.8rem; margin: 0;">✔ Pagar</a>
+                                                <?php endif; ?>
+                                                <a href="editar_transacao.php?id=<?php echo $tr['id']; ?>" class="botao" style="background-color: #ffc107; color: #000; padding: 5px 10px; font-size: 0.8rem; margin: 0; border-color: #ffc107;">✏️ Editar</a>
+                                                <a href="transacoes.php?excluir=<?php echo $tr['id']; ?>&mes=<?php echo $competencia; ?>&status=<?php echo $filtroStatus; ?>" onclick="return confirm('Excluir?')" class="botao btn-perigo" style="padding: 5px 10px; font-size: 0.8rem; margin: 0;">✖ Excluir</a>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
                             <?php endforeach; ?>
                         <?php else: ?>
-                            <tr><td colspan="5" style="text-align: center; color: #888;">Nenhuma despesa encontrada com esse filtro.</td></tr>
+                            <tr><td colspan="5" style="text-align: center; color: #888; padding: 20px;">Nenhuma despesa encontrada.</td></tr>
                         <?php endif; ?>
                     </tbody>
                     <tfoot>
                         <tr style="background-color: #f8d7da;">
                             <td colspan="2" class="esconder-celular" style="text-align: right; font-weight: 700; color: #dc3545;">Total Filtrado:</td>
-                            <td data-label="Total Despesas" class="valor-negativo" style="font-weight: 900;">- <?php echo number_format($totalDespesas, 2, ',', '.'); ?></td>
+                            <td class="valor-negativo" style="font-weight: 900;">- <?php echo number_format($totalDespesas, 2, ',', '.'); ?></td>
                             <td colspan="2" class="esconder-celular"></td>
                         </tr>
                     </tfoot>
@@ -247,5 +287,29 @@ require_once 'includes/header.php';
 
     </section>
 </main>
+
+<!-- Script para a Sanfona no Celular -->
+<script>
+function toggleDetalhes(idElemento) {
+    // Só aciona o efeito se estiver no celular (largura menor que 768px)
+    if (window.innerWidth < 768) {
+        var linhaDetalhe = document.getElementById(idElemento);
+        
+        // Verifica se a linha atual já está aberta
+        if (linhaDetalhe.style.display === 'table-row') {
+            linhaDetalhe.style.display = 'none'; // Fecha
+        } else {
+            // (Opcional) Fecha todas as outras que estiverem abertas
+            var todasAsLinhas = document.querySelectorAll('.linha-detalhes');
+            todasAsLinhas.forEach(function(linha) {
+                linha.style.display = 'none';
+            });
+            
+            // Abre a linha clicada
+            linhaDetalhe.style.display = 'table-row';
+        }
+    }
+}
+</script>
 
 <?php require_once 'includes/footer.php'; ?>

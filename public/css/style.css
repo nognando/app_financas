@@ -394,62 +394,68 @@ h2 {
 .btn-consolidar { background-color: #17a2b8; }
 
 /* =========================================
-   6. TABELAS RESPONSIVAS (Modo Cartão para Celular)
+   6. TABELAS RESPONSIVAS (Lista Expansível no Celular)
    ========================================= */
 
+/* Estilos da linha escondida de detalhes */
+.linha-detalhes {
+    display: none; /* Escondida por padrão */
+    background-color: #f1f9ff;
+}
+
+.box-detalhes {
+    padding: 15px;
+    font-size: 0.9rem;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.box-detalhes p {
+    margin-bottom: 8px;
+}
+
+/* Cursor de mão ao passar por cima */
+.linha-clicavel {
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.linha-clicavel:active {
+    background-color: #e9ecef;
+}
+
+/* --- REGRAS APENAS PARA CELULAR --- */
 @media (max-width: 767px) {
-    /* Remove a obrigatoriedade de ter 400px */
-    .tabela-dados {
-        min-width: 100%; 
+    /* Reduz a fonte da tabela inteira no celular */
+    .tabela-dados th, .tabela-dados td {
+        font-size: 0.85rem;
+        padding: 12px 8px;
     }
 
-    /* Força os elementos da tabela a se comportarem como blocos normais */
-    .tabela-dados, 
-    .tabela-dados tbody, 
-    .tabela-dados tr, 
-    .tabela-dados td {
-        display: block;
-        width: 100%;
+    /* Classe mágica que esconde colunas desnecessárias na visão inicial */
+    .ocultar-mobile {
+        display: none !important;
     }
 
-    /* Esconde o cabeçalho original (th) */
-    .tabela-dados thead {
-        display: none; 
+    /* Adiciona uma setinha apontando para baixo indicando que é clicável */
+    .indicador-clique::after {
+        content: ' ▼';
+        font-size: 0.7rem;
+        color: #00a2ed;
+        margin-left: 5px;
     }
+}
 
-    /* Transforma cada linha (tr) em um cartão */
-    .tabela-dados tr {
-        margin-bottom: 15px;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        background-color: #ffffff;
-        padding: 10px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+/* --- REGRAS APENAS PARA COMPUTADOR --- */
+@media (min-width: 768px) {
+    /* No PC, a linha de detalhes nunca aparece, as colunas já estão visíveis */
+    .linha-detalhes {
+        display: none !important;
     }
-
-    /* Ajusta as células (td) dentro do cartão */
-    .tabela-dados td {
-        text-align: right; /* Alinha o valor para a direita */
-        padding: 10px;
-        position: relative;
-        border-bottom: 1px solid #f8f9fa;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+    .linha-clicavel {
+        cursor: default; /* Remove o cursor de clique no PC */
     }
-
-    .tabela-dados td:last-child {
-        border-bottom: none;
-    }
-
-    /* Pega o texto do 'data-label' no HTML e coloca como título na esquerda */
-    .tabela-dados td::before {
-        content: attr(data-label);
-        font-weight: 700;
-        color: #495057;
-        text-transform: uppercase;
-        font-size: 0.75rem;
-        text-align: left;
+    .indicador-clique::after {
+        content: ''; /* Remove a setinha no PC */
     }
 }
 

@@ -112,7 +112,7 @@ require_once 'includes/header.php';
 </section>
 
 <main class="container">
-    
+    <a href="nova_transacao.php" class="botao btn-sucesso" style="text-align: center;">+ Nova Transação</a>
     <h3 style="margin-bottom: 15px; color: #666;">Saldo Realizado <small>(Pago/Recebido no mês)</small></h3>
     <section class="grade-projetos">
         <article class="cartao-projeto" style="border-left: 5px solid #28a745;">
